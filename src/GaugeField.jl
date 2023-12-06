@@ -18,8 +18,8 @@ function GaugeField2D(Nx,Nt)
     end
 end
 Base.size(a::I) where I<:GaugeField = @inline Base.size(a.U)
-Base.IndexStyle(a::I) where I<:GaugeField = Base.IndexStyle(a.U)
+Base.IndexStyle(a::I) where I<:GaugeField = @inline Base.IndexStyle(a.U)
 
-Base.getindex(a::I,i)  where {I<:GaugeField} =  @inbounds getindex(a.U, mod.(i.I, axes(a.U))...)
+Base.getindex(a::I,i)  where {I<:GaugeField} =  @inline @inbounds getindex(a.U, mod.(i.I, axes(a.U))...)
 
-Base.setindex!(collection::I,value,key) where I<:GaugeField = Base.setindex!(collection.U,value,key)
+Base.setindex!(collection::I,value,key) where I<:GaugeField = @inline Base.setindex!(collection.U,value,key)
