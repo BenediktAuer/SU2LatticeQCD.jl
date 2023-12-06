@@ -21,5 +21,5 @@ Base.size(a::I) where I<:GaugeField = @inline Base.size(a.U)
 Base.IndexStyle(a::I) where I<:GaugeField = @inline Base.IndexStyle(a.U)
 
 Base.getindex(a::I,i)  where {I<:GaugeField} =  @inline @inbounds getindex(a.U, mod.(i.I, axes(a.U))...)
-
-Base.setindex!(collection::I,value,key) where I<:GaugeField = @inline Base.setindex!(collection.U,value,key)
+#TODO: Change key to mod.(i.I, axes(a.U))... for periodic boundary conditions
+Base.setindex!(collection::I,value,key) where I<:GaugeField = @inbounds @inline Base.setindex!(collection.U,value,key)
