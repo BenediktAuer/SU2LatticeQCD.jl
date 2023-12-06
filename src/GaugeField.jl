@@ -8,13 +8,13 @@ struct GaugeField2D<:GaugeField{SU2{ComplexF32},2}
   
     @doc  """
     GaugeField2D(Nx,Nt)
-    returns a GaugeField with Dimension 2. The underlaying Matrix has the shape (Nt,Nx,μ)    
+    returns a GaugeField with Dimension 2. The underlaying Matrix has the shape (Nx,Nt,μ)    
     GaugeField is periodic 
 """
 function GaugeField2D(Nx,Nt)
         U = ones(SU2{ComplexF32},(Nt,Nx,2))
         print(U)
-        return new(U,Nx,Nt,Nx*Nt)
+        return new(U,Nt,Nx,Nx*Nt)
     end
 end
 Base.size(a::I) where I<:GaugeField = @inline Base.size(a.U)
