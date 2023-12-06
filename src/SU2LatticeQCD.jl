@@ -5,5 +5,6 @@ import Base: size,getindex,setindex!
 include("GaugeField.jl")
 include("periodic.jl")
 include("Metropolis.jl")
-export GaugeField2D,apply_periodic_boundary_conditions,getindexPeriodic
+include("stapels.jl")
+export GaugeField2D,getDirectionalIndex
 end

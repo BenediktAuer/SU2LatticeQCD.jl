@@ -3,6 +3,11 @@ uuid = "2ffe06d0-2653-4f13-9d51-1570e99b1776"
 authors = ["Benedikt Auer"]
 version = "1.0.0-DEV"
 
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+EfficentSU2 = "51eaf21e-d21c-4194-9434-688538785514"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+
 [compat]
 julia = "1"
 
