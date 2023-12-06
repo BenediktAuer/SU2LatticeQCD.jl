@@ -10,7 +10,7 @@ function metropolis!(lattice,β,rounds)
     for i in eachindex(lattice)
         #calculate the staple for the given lattice site
         A = staple(lattice,i)
-        for j in 1:rounds
+        for _ in 1:rounds
             #choose new Matrix
             U′ = newSU2(ϵ)
             #get Old MAtrix
