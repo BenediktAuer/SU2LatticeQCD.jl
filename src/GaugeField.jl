@@ -1,5 +1,17 @@
 abstract type GaugeField{T,N}<:AbstractArray{T,N} end
 
+struct GaugeField4D<:GaugeField{SU2{ComplexF32},4}
+    U::Array{SU2{ComplexF32},3}
+    Nx::Int64
+    Ny::Int64
+    Nz::Int64
+    Nt::Int64
+    Volume::Int64
+    function GaugeField4D(Nx,Ny,Nz,Nt)
+        U = ones(SU2{ComplexF32},(Nx,Ny,Nz,Nt,4))
+        print(U)
+        return new(U,Nx,Ny,Nz,Nt,Nx*Ny*Nz*Nt)
+    end
 struct GaugeField2D<:GaugeField{SU2{ComplexF32},2}
     U::Array{SU2{ComplexF32},3}
     Nx::Int64
