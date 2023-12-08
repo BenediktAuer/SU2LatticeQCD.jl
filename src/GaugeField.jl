@@ -12,6 +12,7 @@ struct GaugeField4D<:GaugeField{SU2{ComplexF32},4}
         print(U)
         return new(U,Nx,Ny,Nz,Nt,Nx*Ny*Nz*Nt)
     end
+end
 struct GaugeField2D<:GaugeField{SU2{ComplexF32},2}
     U::Array{SU2{ComplexF32},3}
     Nx::Int64
