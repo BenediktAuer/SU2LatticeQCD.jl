@@ -1,7 +1,7 @@
 function staple(lattice,i)
     μ = i.I[end]
     iterator = Iterators.filter(x->x!=μ,1:4)
-    staple = sum( lattice[getDirectionalIndex(i,μ,ν)] *lattice[getDirectionalIndex(i,ν,μ)]'*lattice[getDirectionalIndex(i,0,ν)]' for ν in iterator)
+    staple = sum( lattice[getDirectionalIndex(i,μ,ν)] *lattice[getDirectionalIndex(i,ν,μ)]'*lattice[getDirectionalIndex(i,0,ν)]' +lattice[getDirectionalIndex(i,μ-ν,ν)]'*lattice[getDirectionalIndex(i,-ν,μ)]'*lattice[getDirectionalIndex(i,-ν,ν)] for ν in iterator)
 end
 
 """
@@ -10,6 +10,5 @@ end
 
 """
 function getDirectionalIndex(i::CartesianIndex,μ,ν)
-    return i+(μ==1)*CartesianIndex(1,0,0,0,0)+(μ==2)*CartesianIndex(0,1,0,0,0)+(μ==3)*CartesianIndex(0,0,1,0,0)+(μ==4)*CartesianIndex(0,0,0,1,0)-CartesianIndex(0,0,0,0,i.I[end]-ν)
+    return i+(μ==1||μ==-1)*CartesianIndex(1,0,0,0,0)+(μ==2||μ==-2)*CartesianIndex(0,1,0,0,0)+(μ==3||μ==-3)*CartesianIndex(0,0,1,0,0)+(μ==4||μ==-4)*CartesianIndex(0,0,0,1,0)-CartesianIndex(0,0,0,0,i.I[end]-ν)
 end
-
