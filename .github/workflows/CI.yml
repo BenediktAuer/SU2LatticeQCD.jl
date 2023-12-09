@@ -2,10 +2,7 @@ name: CI
 on:
   push:
     branches:
-<<<<<<< HEAD
-      
-=======
->>>>>>> e6b0ffd004ea9529ee5032d4ea3299164a393c22
+
     tags: ['*']
   pull_request:
   workflow_dispatch:
