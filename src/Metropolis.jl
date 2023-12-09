@@ -6,7 +6,7 @@ end
 function metropolis!(lattice,β,iterator,rounds,ϵ)
     #not sure about this one
     #TODO:change to right value
-    N=1
+    N=2
     #first and last iteration missing
     @inbounds for i in iterator
         #calculate the staple for the given lattice site
