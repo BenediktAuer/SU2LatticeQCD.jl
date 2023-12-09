@@ -17,7 +17,7 @@ struct SU2Simulation
         return new(β,lattice,iterator,Nx,Ny,Nz,Nt,ϵ)
     end
 end
-function simulate!(a::SU2Simulation,rounds)
+function simulate!(a::SU2Simulation,rounds::T) where T<:Integer
     @inline metropolis!(a.:lattice,a.:β,a.:iterator,rounds,a.:ϵ)
     
 end
