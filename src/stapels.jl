@@ -10,6 +10,6 @@ end
 
 """
 function getDirectionalIndex(i::CartesianIndex,μ,ν)
-    sign = sign(μ)
-    return i+sign*(μ==1||μ==-1)*CartesianIndex(1,0,0,0,0)+sign*(μ==2||μ==-2)*CartesianIndex(0,1,0,0,0)+sign*(μ==3||μ==-3)*CartesianIndex(0,0,1,0,0)+sign*(μ==4||μ==-4)*CartesianIndex(0,0,0,1,0)-CartesianIndex(0,0,0,0,i.I[end]-ν)
+    signofμ = sign(μ)
+    return i+signofμ*(μ==1||μ==-1)*CartesianIndex(1,0,0,0,0)+signofμ*(μ==2||μ==-2)*CartesianIndex(0,1,0,0,0)+signofμ*(μ==3||μ==-3)*CartesianIndex(0,0,1,0,0)+signofμ*(μ==4||μ==-4)*CartesianIndex(0,0,0,1,0)-CartesianIndex(0,0,0,0,i.I[end]-ν)
 end
