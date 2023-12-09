@@ -10,7 +10,19 @@ struct SU2Simulation
     Ny::Int64
     Nz::Int64
     Nt::Int64
-    ϵ::Float64
+    ϵ::Float32
+    """
+    SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ)
+    initialize a SU2 Simulation container 
+    
+    # Arguments
+    `β::Float32`: inverse temperature, or equivallently ``a⋅Nt=β`` where `a` is the Lattice spacing
+    `Ni::Int64`: Size of the lattice in direction `i`
+    `Nt::Int64`: Size of the lattice in the temporal direction
+    `ϵ::Float32`: Parameter to adjust the acceptance rate of the Metropolisalgorithem
+    ...
+    TBW
+    """
     function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ)
         lattice = GaugeField4D(Nx,Ny,Nz,Nt)
         iterator = CartesianIndices(lattice)
