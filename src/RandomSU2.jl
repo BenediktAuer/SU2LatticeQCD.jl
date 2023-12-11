@@ -16,12 +16,11 @@ end
      generating of a random SU2 Matrix, the RandomNumbers are inplace generated
 TBW
 """
-function get_randomSU2!(R,ϵ)
+function get_randomSU2!(R,viewR,ϵ)
     #distance = 1/2--1/2 gives interval -1/2 to 1/2
     getRandUniformly!(R,1)
-         R .= R./norm(R)
-     R[1] = sign(R[1])*sqrt(1-ϵ^2)/ϵ 
-          R .= R.* ϵ
+        viewR .*= ϵ/norm(viewR)
+     R[1] = sign(R[1])*sqrt(1-ϵ^2)
      return SU2(R[1]+R[4]*im,R[3]+R[2]*im)
 
 end
