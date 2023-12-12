@@ -3,10 +3,19 @@ function Polyakovloop(lattice,x,Nt)
     #getDirectionalIndex(CartesianIndex(1,1,1,1,1),4,4,k) for k in 0:3
 end
 
- measurmentloop!(array,a,func,vargs...) = _measurmentloop(array,a.:lattice,func,vargs...)
-function _measurmentloop(array,lattice,func,vargs...)
-    zero(Float64,length())
-    for (i,cartidx) in enumerate(CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1)))
+ """
+    measurmentloopSpacial(array,a,func,vargs...)
+calculates the mean of the observable `func` over the spacial components of the lattice.
+`vargs` are the extra arguments of `func`.
+The only implemented function `func` is `Polyakovloop`.
+
+"""
+measurmentloopSpacial(a,func,vargs...) = _measurmentloopSpacial(a.:lattice,func,vargs...)
+function _measurmentloopSpacial(lattice,func,vargs...)
+    iter =CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1))
+    array =zeros(Float64,length(iter))
+    for (i,cartidx) in enumerate(iter)
         array[i] = func(lattice,cartidx,vargs...)
     end
+    return mean(array)
 end
