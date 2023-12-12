@@ -46,5 +46,5 @@ include("Metropolis.jl")
 include("stapels.jl")
 include("RandomSU2.jl")
 include("IO.jl")
-export SU2Simulation, simulate!,save,loadConfig!
+export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop
 end
