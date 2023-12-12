@@ -1,6 +1,6 @@
 module SU2LatticeQCD
 using EfficentSU2,LinearAlgebra,Random
-import Base: size,getindex,setindex!
+import Base: size,getindex,setindex!,show
 include("GaugeField.jl") 
 struct SU2Simulation
     β::Base.RefValue{Float32}
@@ -33,6 +33,13 @@ function simulate!(a::SU2Simulation,rounds::T) where T<:Integer
     @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[])
     
 end
+function Base.show(io::IO, ::MIME"text/plain", a::SU2Simulation) 
+    println(io, "T=",a.:β[])
+    println(io, "N",a.:Nx,"×",a.:Ny,"×",a.:Nz,"×",a.:Nt,)
+    println(io, "ϵ=",a.:ϵ[])
+    println(io,a.lattice)
+end
+
 # Write your package code here.
 include("periodic.jl")
 include("Metropolis.jl")
