@@ -6,10 +6,11 @@ end
 
 """
     getDirectionalIndex(i::CartesianIndex,μ)
-    returns the Index in diection μ at ν,i.e ``U_\\nu(x+\\mu)``
+    returns the Index in diection μ at ν,i.e ``U \\_nu (x+\\mu)``
 
 """
-function getDirectionalIndex(i::CartesianIndex,μ,ν)
+function getDirectionalIndex(i::CartesianIndex,μ,ν,mul=1)
+    #TODO anstatt sign use multiplicity
     signofμ = sign(μ)
-    return i+signofμ*(μ==1||μ==-1)*CartesianIndex(1,0,0,0,0)+signofμ*(μ==2||μ==-2)*CartesianIndex(0,1,0,0,0)+signofμ*(μ==3||μ==-3)*CartesianIndex(0,0,1,0,0)+signofμ*(μ==4||μ==-4)*CartesianIndex(0,0,0,1,0)-CartesianIndex(0,0,0,0,i.I[end]-ν)
+    return i+mul*signofμ*(μ==1||μ==-1)*CartesianIndex(1,0,0,0,0)+mul*signofμ*(μ==2||μ==-2)*CartesianIndex(0,1,0,0,0)+mul*signofμ*(μ==3||μ==-3)*CartesianIndex(0,0,1,0,0)+mul*signofμ*(μ==4||μ==-4)*CartesianIndex(0,0,0,1,0)-CartesianIndex(0,0,0,0,i.I[end]-ν)
 end
