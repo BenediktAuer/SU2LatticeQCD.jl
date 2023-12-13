@@ -33,5 +33,6 @@ Base.length(a::I) where I<:GaugeField = @inline Base.length(a.U)
 Base.IndexStyle(a::I) where I<:GaugeField = @inline Base.IndexStyle(a.U)
 Base.getindex(a::I,i::T) where {I<:GaugeField,T<:Integer} = @inline @inbounds getindex(a.U,i)
 Base.getindex(a::I,i::T)  where {I<:GaugeField,T<:CartesianIndex} =  @inline @inbounds getindex(a.U, mod.(i.I, axes(a.U))...)
+Base.show(io::IO, ::MIME"text/plain", a::GaugeField) = print(io,i for i in eachindex(a))
 #TODO: Change key to mod.(i.I, axes(a.U))... for periodic boundary conditions
 Base.setindex!(collection::I,value,key) where I<:GaugeField =  @inline Base.setindex!(collection.U,value,key)

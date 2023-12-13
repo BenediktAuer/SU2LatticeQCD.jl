@@ -37,7 +37,7 @@ function Base.show(io::IO, ::MIME"text/plain", a::SU2Simulation)
     println(io, "T=",a.:β[])
     println(io, "N",a.:Nx,"×",a.:Ny,"×",a.:Nz,"×",a.:Nt,)
     println(io, "ϵ=",a.:ϵ[])
-    println(io,a.lattice)
+    println(io,a.:lattice)
 end
 
 # Write your package code here.
