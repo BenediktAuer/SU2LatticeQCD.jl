@@ -2,6 +2,8 @@ function staple(lattice,i)
     μ = i.I[end]
     iterator = Iterators.filter(x->x!=μ,1:4)
     staple = sum( lattice[getDirectionalIndex(i,μ,ν)] *lattice[getDirectionalIndex(i,ν,μ)]'*lattice[getDirectionalIndex(i,0,ν)]' +lattice[getDirectionalIndex(i,μ-ν,ν)]'*lattice[getDirectionalIndex(i,-ν,μ)]'*lattice[getDirectionalIndex(i,-ν,ν)] for ν in iterator)
+    #[((SU2LatticeQCD.getDirectionalIndex(CartesianIndex(1,1,1,1,1),μ,ν)  , SU2LatticeQCD.getDirectionalIndex(CartesianIndex(1,1,1,1,1),ν,μ) , SU2LatticeQCD.getDirectionalIndex(CartesianIndex(1,1,1,1,1),0,ν))  ,( SU2LatticeQCD.getDirectionalIndex(CartesianIndex(1,1,1,1,1),μ-ν,ν) , SU2LatticeQCD.getDirectionalIndex(CartesianIndex(1,1,1,1,1),-ν,μ) , SU2LatticeQCD.getDirectionalIndex(CartesianIndex(1,1,1,1,1),-ν,ν)))  for ν in iterator]
+    #TODO: getDirectionalIndex just for the addition to index i
 end
 
 """
