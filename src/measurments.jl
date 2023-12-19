@@ -1,5 +1,5 @@
 function Polyakovloop(lattice,x,Nt)
-    return tr(prod(lattice[getDirectionalIndex(x,4,4,k)] for k in 0:(Nt-1)))
+    return 1/2*tr(prod(lattice[getDirectionalIndex(x,4,4,k)] for k in 0:(Nt-1)))
     #getDirectionalIndex(CartesianIndex(1,1,1,1,1),4,4,k) for k in 0:3
     #TODO: Anpassen an neue getDirectionalIndex function
 end
