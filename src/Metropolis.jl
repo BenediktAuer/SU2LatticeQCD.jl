@@ -22,9 +22,9 @@ function metropolis!(lattice,β,iterator,rounds,ϵ)
             if judge(DeltaS) 
                 #newx has to bea a copy. newSU2() makes such a copy ithink
                 lattice[i] .= U′
-                renormalize!(lattice[i])
             end
         end
+        renormalize!(lattice[i])
     end
 
     return
