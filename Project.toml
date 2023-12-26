@@ -1,7 +1,7 @@
 name = "SU2LatticeQCD"
 uuid = "2ffe06d0-2653-4f13-9d51-1570e99b1776"
 authors = ["Benedikt Auer"]
-version = "1.1.1"
+version = "1.1.2"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
