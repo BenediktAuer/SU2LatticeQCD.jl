@@ -1,10 +1,10 @@
 module SU2LatticeQCD
-using EfficentSU2,LinearAlgebra,Random,Statistics
+using EfficentSU2,LinearAlgebra,Random,Statistics,LoopVectorization
 import Base: size,getindex,setindex!,show
 include("GaugeField.jl") 
-struct SU2Simulation
+struct SU2Simulation{T<:GaugeField}
     β::Base.RefValue{Float32}
-    lattice::GaugeField4D
+    lattice::T
     iterator::CartesianIndices
     Nx::Int64
     Ny::Int64
@@ -23,11 +23,27 @@ struct SU2Simulation
     ...
     TBW
     """
-    function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ)
-        lattice = GaugeField4D(Nx,Ny,Nz,Nt)
-        iterator = CartesianIndices(lattice)
-        return new(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)))
+    function SU2Simulation(::Type{T},β,Nx,Ny,Nz,Nt,ϵ) where T<:GaugeField
+        lattice = T(Nx,Ny,Nz,Nt)
+        iterator = getIterator((lattice))
+        return new{T}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)))
     end
+end
+function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ,execution::Symbol)
+    if execution == :parallel
+        return SU2Simulation(GaugeField4DP,β,Nx,Ny,Nz,Nt,ϵ)
+    end
+    if execution ==:serial
+        return SU2Simulation(GaugeField4D,β,Nx,Ny,Nz,Nt,ϵ)
+    end
+    @assert false "Cant execute in $(execution) ! Use `:serial` for an serial evaluation or `:parallel` for an parallel execution"  
+
+end
+function getIterator(lattice ::T) where T<: GaugeField4D
+    return CartesianIndices(lattice)
+end
+function getIterator(lattice::T) where T<: GaugeField4DP
+    return CartesianIndices((lattice.:Nx,lattice.:Ny,lattice.:Nz,lattice.:Nt))
 end
 function simulate!(a::SU2Simulation,rounds::T) where T<:Integer
     @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[])
@@ -37,6 +53,7 @@ function Base.show(io::IO, ::MIME"text/plain", a::SU2Simulation)
     println(io, "T=",a.:β[])
     println(io, "N",a.:Nx,"×",a.:Ny,"×",a.:Nz,"×",a.:Nt,)
     println(io, "ϵ=",a.:ϵ[])
+    println(io,typeof(a.:lattice))
     println(io,a.:lattice)
 end
 
