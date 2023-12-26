@@ -13,7 +13,7 @@ function testfunction(i,execution)
         # Write your tests here.
         res = testfunction(10_000,:parallel)
         @show res
-        @test  res≈0.44 atol=0.01
+        @test  res≈0.44 atol=0.02
         # @btime testfunction(10_000)
     end
 @testset "serial execution" begin

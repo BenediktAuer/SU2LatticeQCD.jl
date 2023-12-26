@@ -1,5 +1,7 @@
 using SU2LatticeQCD
 using  Statistics, BenchmarkTools
+Threads.nthreads()
+
 function testfunction(i,execution)
     a = SU2Simulation(2.0,4,4,4,2,0.2,execution)
     res = zeros(Float64,i)
@@ -10,5 +12,5 @@ function testfunction(i,execution)
     mean(abs,res)
 end
 
-a =testfunction(10_000,:parallel)
+ testfunction(10_000,:parallel)
 isapprox(a, 0.44, atol=0.02)
