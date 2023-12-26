@@ -1,5 +1,5 @@
 module SU2LatticeQCD
-using EfficentSU2,LinearAlgebra,Random,Statistics,LoopVectorization
+using EfficentSU2,LinearAlgebra,Random,Statistics
 import Base: size,getindex,setindex!,show
 include("GaugeField.jl") 
 struct SU2Simulation{T<:GaugeField}

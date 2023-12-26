@@ -1,5 +1,5 @@
 using SU2LatticeQCD
-using Test, Statistics, BenchmarkTools
+using Test, Statistics
 function testfunction(i,execution)
     a = SU2Simulation(2.0,4,4,4,2,0.2,execution)
     res = zeros(Float64,i)
