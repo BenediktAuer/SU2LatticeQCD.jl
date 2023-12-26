@@ -27,4 +27,5 @@ function _measurmentloopSpacialP(lattice,func,vargs...)
     ThreadsX.foreach(enumerate(iter)) do (i,cartidx)
         @inbounds array[i] = func(lattice,cartidx,vargs...)
     end
+    return mean(array)
 end
