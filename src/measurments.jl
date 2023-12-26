@@ -20,3 +20,11 @@ function _measurmentloopSpacial(lattice,func,vargs...)
     end
     return mean(array)
 end
+measurmentloopSpacialP(a,func,vargs...) = _measurmentloopSpacialP(a.:lattice,func,vargs...)
+function _measurmentloopSpacialP(lattice,func,vargs...)
+    iter =CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1))
+    array =zeros(Float64,length(iter))
+    ThreadsX.foreach(enumerate(iter)) do (i,cartidx)
+        @inbounds array[i] = func(lattice,cartidx,vargs...)
+    end
+end

@@ -1,6 +1,6 @@
 module SU2LatticeQCD
 using EfficentSU2,LinearAlgebra,Random,Statistics
-import Base: size,getindex,setindex!,show
+import Base: size,getindex,setindex!,show, ThreadsX
 include("GaugeField.jl") 
 struct SU2Simulation{T<:GaugeField}
     β::Base.RefValue{Float32}
@@ -64,5 +64,5 @@ include("stapels.jl")
 include("RandomSU2.jl")
 include("IO.jl")
 include("measurments.jl")
-export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop
+export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop,measurmentloopSpacialP
 end
