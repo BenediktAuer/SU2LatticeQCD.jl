@@ -7,7 +7,7 @@ function testfunction(i,execution)
     res = zeros(Float64,i)
     for i in 1:i
     simulate!(a,100)
-    res[i] = measurmentloopSpacial(a,Polyakovloop,2)
+    res[i] = measurmentloopSpacialP(a,Polyakovloop,2)
     end
     mean(abs,res)
 end

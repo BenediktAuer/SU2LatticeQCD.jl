@@ -1,6 +1,6 @@
 module SU2LatticeQCD
-using EfficentSU2,LinearAlgebra,Random,Statistics
-import Base: size,getindex,setindex!,show, ThreadsX
+using EfficentSU2,LinearAlgebra,Random,Statistics,ThreadsX
+import Base: size,getindex,setindex!,show
 include("GaugeField.jl") 
 struct SU2Simulation{T<:GaugeField}
     β::Base.RefValue{Float32}
