@@ -49,7 +49,7 @@ function metropolis!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField4DP
                         DeltaS = ΔS(U′,U,A,β,N)
                     #accept or reject U′
                         #removing the dot in .= changes algo ??
-                            lattice[i,μ] = ifelse(judge(DeltaS) , U′,U)
+                            lattice[i,μ] .= ifelse(judge(DeltaS) , U′,U)
                     end
                 renormalize!(lattice[i,μ])
             end
