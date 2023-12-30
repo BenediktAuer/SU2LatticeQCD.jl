@@ -39,20 +39,19 @@ function metropolis!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField4DP
     for μ in (1,2,3,4)
         ThreadsX.foreach(  Iterators.filter(x->(-1)^sum(x.I)==parity,iterator)) do i
     #calculate the staple for the given lattice site
-                idx =CartesianIndex(i,μ)
-                A = staple(lattice,idx)
+                A = staple(lattice,CartesianIndex(i,μ))
                 for _ in 1:rounds
                 #choose new Matrix
-                   @inbounds U = lattice[idx]
+                   @inbounds U = lattice[i,μ]
                     U′ = newSU2(U,ϵ)
                     #get Old MAtrix
                     #calculate the diffrence in Action from U′,U the staple and 
                     DeltaS = ΔS(U′,U,A,β,N)
                 #accept or reject U′
                     #removing the dot in .= changes algo ??
-                        @inbounds lattice[idx] .= ifelse(judge(DeltaS) , U′,U)
+                        @inbounds lattice[i,μ] .= ifelse(judge(DeltaS) , U′,U)
                 end
-                renormalize!(lattice[idx])
+                renormalize!(lattice[i,μ])
             end
            
     end
@@ -65,6 +64,7 @@ end
 function _metropolishelper!(lattice::T,β,iterator,rounds,ϵ,parity,N) where T<: GaugeField4DP
     
     for μ in [1,2,3,4]
+        
         ThreadsX.foreach(  Iterators.filter(x->(-1)^sum(x.I)==parity,iterator)) do i
     #calculate the staple for the given lattice site
                 idx =CartesianIndex(i,μ)
