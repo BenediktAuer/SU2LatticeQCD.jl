@@ -4,11 +4,11 @@ function newSU2(U,ϵ)
 end
 function get_randomSU2(ϵ)
     #distance = 1/2--1/2 gives interval -1/2 to 1/2
-    r = getRandUniformly(Float32,1,4)
+    r = getRandUniformly(Float32,1,Val(4))
     r24 = view(r,2:4)
-    r24 .*= ϵ/norm(r24)
-     r[1] = sign(r[1])*sqrt(1-ϵ^2)
-     return SU2(r[1]+r[4]*im,r[3]+r[2]*im)
+    factor =  ϵ/norm(r24)
+     r1 =  sign(r[1])*sqrt(1-ϵ^2)
+     return SU2{ComplexF32}(r1+r[4]*factor*im,r[3]*factor+r[2]*factor*im)
 
 end
 """
@@ -29,9 +29,13 @@ end
     returns `nums` RAndomNumbers Uniformly in the Intervall 0-distance to 0+distance 
 TBW
 """
-function getRandUniformly(::Type{T},distance,nums::Int64) where T
-    rand(T,nums)./distance .-T(distance/2)
+function getRandUniformly(::Type{T},distance,::Val{N}) where {T,N}
+    (@SVector rand(T,N))./distance .-T(distance/2)
 end
+# @inline function  getRand(::Type{T},::Val{N}) where {T,N}
+#     return   @SVector rand(T,N)
+# end
+
 
 function getRandUniformly!(x::T,distance) where {N<:Number,T<:Array{N}}
     rand!(x)
