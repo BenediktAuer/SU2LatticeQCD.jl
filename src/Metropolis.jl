@@ -21,10 +21,10 @@ function metropolis!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField
             #accept or reject U′
             if judge(DeltaS) 
                 #newx has to bea a copy. newSU2() makes such a copy ithink
-                lattice[i] .= U′
+                lattice[i] = U′
             end
         end
-        renormalize!(lattice[i])
+        lattice[i] =  renormalize(lattice[i])
     end
 
     return
@@ -49,9 +49,9 @@ function metropolis!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField4DP
                     DeltaS = ΔS(U′,U,A,β,N)
                 #accept or reject U′
                     #removing the dot in .= changes algo ??
-                        @inbounds lattice[i,μ] .= ifelse(judge(DeltaS) , U′,U)
+                        @inbounds lattice[i,μ] = ifelse(judge(DeltaS) , U′,U)
                 end
-                renormalize!(lattice[i,μ])
+                @inbounds lattice[i,μ] =  renormalize(lattice[i,μ])
             end
            
     end
