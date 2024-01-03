@@ -2,7 +2,8 @@ module SU2LatticeQCD
 using EfficentSU2,LinearAlgebra,Random,Statistics,ThreadsX, StaticArrays
 import Base: size,getindex,setindex!,show
 include("GaugeField.jl") 
-struct SU2Simulation{T<:GaugeField}
+include("Acceptens.jl")
+struct SU2Simulation{T<:GaugeField,K<:Union{AcceptMeasurment,Missing}}
     β::Base.RefValue{Float32}
     lattice::T
     iterator::CartesianIndices
@@ -11,6 +12,7 @@ struct SU2Simulation{T<:GaugeField}
     Nz::Int64
     Nt::Int64
     ϵ::Base.RefValue{Float32}
+    acceptRate::K
     """
     SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ)
     initialize a SU2 Simulation container 
@@ -23,31 +25,60 @@ struct SU2Simulation{T<:GaugeField}
     ...
     TBW
     """
-    function SU2Simulation(::Type{T},β,Nx,Ny,Nz,Nt,ϵ) where T<:GaugeField
-        lattice = T(Nx,Ny,Nz,Nt)
-        iterator = getIterator((lattice))
-        return new{T}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)))
+    # function SU2Simulation(::Type{T},β,Nx,Ny,Nz,Nt,ϵ) where T<:GaugeField
+    #     lattice = T(Nx,Ny,Nz,Nt)
+    #     iterator = getIterator((lattice))
+    #     return new{T}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)))
+    # end
+        function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, execution::Val{:parallel})
+            lattice = GaugeField4DP(Nx,Ny,Nz,Nt)
+            iterator = getIterator((lattice))
+            return new{GaugeField4DP,Missing}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)),missing)
+        end
+        function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, execution::Val{:serial})
+                lattice = GaugeField4D(Nx,Ny,Nz,Nt)
+                iterator = getIterator((lattice))
+            return new{GaugeField4D,Missing}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)),missing)
+        end
+        function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, execution::Val{:acceptRate})
+            lattice = GaugeField4D(Nx,Ny,Nz,Nt)
+            iterator = getIterator((lattice))
+        return new{GaugeField4D,AcceptMeasurment}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)),AcceptMeasurment())
     end
 end
 function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ,execution::Symbol)
-    if execution == :parallel
-        return SU2Simulation(GaugeField4DP,β,Nx,Ny,Nz,Nt,ϵ)
-    end
-    if execution ==:serial
-        return SU2Simulation(GaugeField4D,β,Nx,Ny,Nz,Nt,ϵ)
-    end
-    @assert false "Cant execute in $(execution) ! Use `:serial` for an serial evaluation or `:parallel` for an parallel execution"  
-
+    return SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, Val(execution))
 end
+# function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ,execution::Symbol)
+    
+#     if execution == :parallel
+#         return SU2Simulation(GaugeField4DP,β,Nx,Ny,Nz,Nt,ϵ)
+#     end
+#     if execution ==:serial
+#         return SU2Simulation(GaugeField4D,β,Nx,Ny,Nz,Nt,ϵ)
+#     end
+#     @assert false "Cant execute in $(execution) ! Use `:serial` for an serial evaluation or `:parallel` for an parallel execution"  
+
+# end
 function getIterator(lattice ::T) where T<: GaugeField4D
     return CartesianIndices(lattice)
 end
 function getIterator(lattice::T) where T<: GaugeField4DP
     return CartesianIndices((lattice.:Nx,lattice.:Ny,lattice.:Nz,lattice.:Nt))
 end
-function simulate!(a::SU2Simulation,rounds::T) where T<:Integer
+# function simulate!(a::SU2Simulation,rounds::T) where T<:Integer
+#     @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[])
+    
+# end
+
+function simulate!(a::K,rounds::T) where {K<:SU2Simulation{<:GaugeField,Missing},T<:Integer}
     @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[])
     
+end
+
+function simulate!(a::K,rounds::T) where {K<:SU2Simulation{<:GaugeField,AcceptMeasurment},T<:Integer}
+    @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[],a.:acceptRate)
+
 end
 function Base.show(io::IO, ::MIME"text/plain", a::SU2Simulation) 
     println(io, "T=",a.:β[])
@@ -64,5 +95,5 @@ include("stapels.jl")
 include("RandomSU2.jl")
 include("IO.jl")
 include("measurments.jl")
-export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop,measurmentloopSpacialP
+export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop,measurmentloopSpacialP,AcceptMeasurment,resetAcceptMeasurment,getAcceptRate
 end
