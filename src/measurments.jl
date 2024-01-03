@@ -11,17 +11,17 @@ calculates the mean of the observable `func` over the spacial components of the 
 The only implemented function `func` is `Polyakovloop`.
 
 """
+# measurmentloopSpacial(a,func,vargs...) = _measurmentloopSpacial(a.:lattice,func,vargs...)
+# function _measurmentloopSpacial(lattice,func,vargs...)
+#     iter =CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1))
+#     array =zeros(Float64,length(iter))
+#     for (i,cartidx) in enumerate(iter)
+#         array[i] = func(lattice,cartidx,vargs...)
+#     end
+#     return mean(array)
+# end
 measurmentloopSpacial(a,func,vargs...) = _measurmentloopSpacial(a.:lattice,func,vargs...)
 function _measurmentloopSpacial(lattice,func,vargs...)
-    iter =CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1))
-    array =zeros(Float64,length(iter))
-    for (i,cartidx) in enumerate(iter)
-        array[i] = func(lattice,cartidx,vargs...)
-    end
-    return mean(array)
-end
-measurmentloopSpacialP(a,func,vargs...) = _measurmentloopSpacialP(a.:lattice,func,vargs...)
-function _measurmentloopSpacialP(lattice,func,vargs...)
     iter =CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1))
     array =zeros(Float64,length(iter))
     ThreadsX.foreach(enumerate(iter)) do (i,cartidx)
