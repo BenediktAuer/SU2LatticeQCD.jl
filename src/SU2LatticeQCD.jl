@@ -3,16 +3,16 @@ using EfficentSU2,LinearAlgebra,Random,Statistics,ThreadsX, StaticArrays
 import Base: size,getindex,setindex!,show
 include("GaugeField.jl") 
 include("Acceptens.jl")
-struct SU2Simulation{T<:GaugeField,K<:Union{AcceptMeasurment,Missing}}
+
+struct SU2Simulation{T<:GaugeField}
     β::Base.RefValue{Float32}
     lattice::T
-    iterator::CartesianIndices
     Nx::Int64
     Ny::Int64
     Nz::Int64
     Nt::Int64
     ϵ::Base.RefValue{Float32}
-    acceptRate::K
+    acceptRate::AcceptMeasurment
     """
     SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ)
     initialize a SU2 Simulation container 
@@ -30,25 +30,13 @@ struct SU2Simulation{T<:GaugeField,K<:Union{AcceptMeasurment,Missing}}
     #     iterator = getIterator((lattice))
     #     return new{T}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)))
     # end
-        function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, execution::Val{:parallel})
-            lattice = GaugeField4DP(Nx,Ny,Nz,Nt)
-            iterator = getIterator((lattice))
-            return new{GaugeField4DP,Missing}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)),missing)
-        end
-        function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, execution::Val{:serial})
-                lattice = GaugeField4D(Nx,Ny,Nz,Nt)
-                iterator = getIterator((lattice))
-            return new{GaugeField4D,Missing}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)),missing)
-        end
-        function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, execution::Val{:acceptRate})
+        function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ)
             lattice = GaugeField4D(Nx,Ny,Nz,Nt)
-            iterator = getIterator((lattice))
-        return new{GaugeField4D,AcceptMeasurment}(Ref(Float32(β)),lattice,iterator,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)),AcceptMeasurment())
-    end
+            return new{GaugeField4D}(Ref(Float32(β)),lattice,Nx,Ny,Nz,Nt,Ref(Float32(ϵ)),AcceptMeasurment())
+        end
+        
 end
-function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ,execution::Symbol)
-    return SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ, Val(execution))
-end
+
 # function SU2Simulation(β,Nx,Ny,Nz,Nt,ϵ,execution::Symbol)
     
 #     if execution == :parallel
@@ -60,26 +48,33 @@ end
 #     @assert false "Cant execute in $(execution) ! Use `:serial` for an serial evaluation or `:parallel` for an parallel execution"  
 
 # end
-function getIterator(lattice ::T) where T<: GaugeField4D
-    return CartesianIndices(lattice)
-end
-function getIterator(lattice::T) where T<: GaugeField4DP
-    return CartesianIndices((lattice.:Nx,lattice.:Ny,lattice.:Nz,lattice.:Nt))
-end
+
 # function simulate!(a::SU2Simulation,rounds::T) where T<:Integer
 #     @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[])
     
 # end
+include("Algo.jl")
 
-function simulate!(a::K,rounds::T) where {K<:SU2Simulation{<:GaugeField,Missing},T<:Integer}
-    @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[])
+function simulate!(a::K,sweeps::T,rounds::T, algo::N) where {K<:SU2Simulation,T<:Integer,N<:AbstractAlgo}
+    iterator = getIterator(N,a)
+    func =algo.func
+    for _ in 1:sweeps
+
+    @inline func(a.:lattice,a.:β[],iterator,rounds,a.:ϵ[])::Nothing
+    end
     
 end
-
-function simulate!(a::K,rounds::T) where {K<:SU2Simulation{<:GaugeField,AcceptMeasurment},T<:Integer}
-    @inline metropolis!(a.:lattice,a.:β[],a.:iterator,rounds,a.:ϵ[],a.:acceptRate)
-
+function simulate!(a::K,sweeps::T,rounds::T, algo::N, measurment::Function, args...) where {K<:SU2Simulation,T<:Integer,N<:AbstractAlgo}
+    iterator = getIterator(N,a)
+    func = algo.func
+    res= zeros(sweeps)
+    for i in 1:sweeps
+     @inline func(a.:lattice,a.:β[],iterator,rounds,a.:ϵ[])::Nothing
+     @inbounds res[i] = measurmentloopSpacial(a,measurment,args...)
+    end
+    return res
 end
+
 function Base.show(io::IO, ::MIME"text/plain", a::SU2Simulation) 
     println(io, "T=",a.:β[])
     println(io, "N",a.:Nx,"×",a.:Ny,"×",a.:Nz,"×",a.:Nt,)
@@ -89,11 +84,14 @@ function Base.show(io::IO, ::MIME"text/plain", a::SU2Simulation)
 end
 
 # Write your package code here.
+
+include("AcceptensUtil.jl")
 include("periodic.jl")
-include("Metropolis.jl")
+include("MetropolisUtils.jl")
 include("stapels.jl")
 include("RandomSU2.jl")
 include("IO.jl")
 include("measurments.jl")
-export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop,measurmentloopSpacialP,AcceptMeasurment,resetAcceptMeasurment,getAcceptRate
+export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop,measurmentloopSpacialP,AcceptMeasurment,resetAcceptMeasurment,getAcceptRate,MetropolisSerial,MetropolisParallel
+MetropolisAcceptRate
 end

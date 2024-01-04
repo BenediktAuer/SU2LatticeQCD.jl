@@ -1,9 +1,11 @@
-
-function judge(ΔS)
-    return (ΔS ≤ 0) || (rand(Float64) < exp(-ΔS))
+abstract type AbstractAlgo{T} end
+struct parallel end
+struct serial end
+struct Algo{T} <: AbstractAlgo{T}
+    func::Function
 end
 
-function metropolis!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField
+function _metropolisSerial!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField
     #not sure about this one
     #TODO:change to right value
     N=2
@@ -29,8 +31,9 @@ function metropolis!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField
 
     return
 end
+
 #paralell implementation
-function metropolis!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField4DP
+function _metropolisParallel!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField4D
     #not sure about this one
     #TODO:change to right value
     N=2
@@ -61,34 +64,42 @@ end
 
     return
 end
-# function _metropolishelper!(lattice::T,β,iterator,rounds,ϵ,parity,N) where T<: GaugeField4DP
-    
-#     for μ in [1,2,3,4]
-        
-#         ThreadsX.foreach(  Iterators.filter(x->(-1)^sum(x.I)==parity,iterator)) do i
-#     #calculate the staple for the given lattice site
-#                 idx =CartesianIndex(i,μ)
-#                 A = staple(lattice,idx)
-#                 for _ in 1:rounds
-#                 #choose new Matrix
-#                    @inbounds U = lattice[idx]
-#                     U′ = newSU2(U,ϵ)
-#                     #get Old MAtrix
-#                     #calculate the diffrence in Action from U′,U the staple and 
-#                     DeltaS = ΔS(U′,U,A,β,N)
-#                 #accept or reject U′
-#                     #removing the dot in .= changes algo ??
-#                         @inbounds lattice[idx] .= ifelse(judge(DeltaS) , U′,U)
-#                 end
-#                 renormalize!(lattice[idx])
-#             end
-           
-#     end
-# end
 
-#TODO: Maybe as inplace variant 
-@inline function ΔS(U′,U,A,β,N=2)
-    diff= (U′-U)
-    temp = diff*A
-    return -β/N*tr(temp)
+#measure acceptRate
+function _metropolisAccepRate!(lattice::T,β,iterator,rounds,ϵ,acceptRate::AcceptMeasurment) where T<: GaugeField
+    #not sure about this one
+    #TODO:change to right value
+    N=2
+    #first and last iteration missing
+    @inbounds for i in iterator
+        #calculate the staple for the given lattice site
+        A = staple(lattice,i)
+        for _ in 1:rounds
+            #choose new Matrix
+            U = lattice[i]
+            U′ = newSU2(U,ϵ)
+            #get Old MAtrix
+            #calculate the diffrence in Action from U′,U the staple and 
+            DeltaS = ΔS(U′,U,A,β,N)
+            #accept or reject U′
+            if judge(DeltaS,acceptRate) 
+                #newx has to bea a copy. newSU2() makes such a copy ithink
+                lattice[i] = U′
+            end
+        end
+        lattice[i] =  renormalize(lattice[i])
+    end
+
+    return
+end
+MetropolisSerial() = Algo{serial}(_metropolisSerial!)
+MetropolisParallel() = Algo{parallel}(_metropolisParallel!)
+MetropolisAcceptRate() = Algo{serial}(_metropolisAccepRate!)
+
+
+function getIterator(::Type{T},a::SU2Simulation) where T<: AbstractAlgo{serial}
+    return CartesianIndices(a.lattice)
+end
+function getIterator(::Type{T},a::SU2Simulation) where T<: AbstractAlgo{parallel}
+    return CartesianIndices((a.lattice.Nx,a.lattice.Ny,a.lattice.Nz,a.lattice.Nt))
 end
