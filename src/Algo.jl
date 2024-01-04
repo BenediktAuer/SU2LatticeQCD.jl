@@ -5,7 +5,7 @@ struct Algo{T} <: AbstractAlgo{T}
     func::Function
 end
 
-function _metropolisSerial!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField
+function _metropolisSerial!(lattice::T,β,iterator,rounds,ϵ,vargs...) where T<: GaugeField
     #not sure about this one
     #TODO:change to right value
     N=2
@@ -33,7 +33,7 @@ function _metropolisSerial!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeFie
 end
 
 #paralell implementation
-function _metropolisParallel!(lattice::T,β,iterator,rounds,ϵ) where T<: GaugeField4D
+function _metropolisParallel!(lattice::T,β,iterator,rounds,ϵ,vargs...) where T<: GaugeField4D
     #not sure about this one
     #TODO:change to right value
     N=2
@@ -66,7 +66,7 @@ end
 end
 
 #measure acceptRate
-function _metropolisAccepRate!(lattice::T,β,iterator,rounds,ϵ,acceptRate::AcceptMeasurment) where T<: GaugeField
+function _metropolisAccepRate!(lattice::T,β,iterator,rounds,ϵ,acceptRate) where T<: GaugeField
     #not sure about this one
     #TODO:change to right value
     N=2

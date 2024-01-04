@@ -28,3 +28,8 @@ end
     @show time
     @test time ≈ 8.908902 atol=0.5
 end
+@testset "Acceptrate" begin
+    a = SU2Simulation(2.0,4,4,4,2,0.2)
+    simulate!(a,10,10, MetropolisAcceptRate())
+    println(getAcceptRate(a))
+end

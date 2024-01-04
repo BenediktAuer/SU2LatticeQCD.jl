@@ -60,7 +60,7 @@ function simulate!(a::K,sweeps::T,rounds::T, algo::N) where {K<:SU2Simulation,T<
     func =algo.func
     for _ in 1:sweeps
 
-    @inline func(a.:lattice,a.:β[],iterator,rounds,a.:ϵ[])::Nothing
+    @inline func(a.:lattice,a.:β[],iterator,rounds,a.:ϵ[],a.acceptRate)::Nothing
     end
     
 end
