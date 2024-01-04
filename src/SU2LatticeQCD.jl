@@ -92,6 +92,5 @@ include("stapels.jl")
 include("RandomSU2.jl")
 include("IO.jl")
 include("measurments.jl")
-export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop,measurmentloopSpacialP,AcceptMeasurment,resetAcceptMeasurment,getAcceptRate,MetropolisSerial,MetropolisParallel
-MetropolisAcceptRate
+export SU2Simulation, simulate!,save,loadConfig!,measurmentloopSpacial,Polyakovloop,measurmentloopSpacialP,AcceptMeasurment,resetAcceptMeasurment,getAcceptRate,MetropolisSerial,MetropolisParallel,MetropolisAcceptRate
 end
