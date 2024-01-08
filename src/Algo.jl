@@ -40,7 +40,7 @@ function _metropolisParallel!(lattice::T,β,iterator,rounds,ϵ,vargs...) where T
     #
     for parity in (-1,1)
     for μ in (1,2,3,4)
-        ThreadsX.foreach(  Iterators.filter(x->(-1)^sum(x.I)==parity,iterator)) do i
+      Threads.@threads for i in  iterator
     #calculate the staple for the given lattice site
                 A = staple(lattice,CartesianIndex(i,μ))
                 for _ in 1:rounds
@@ -101,5 +101,5 @@ function getIterator(::Type{T},a::SU2Simulation) where T<: AbstractAlgo{serial}
     return CartesianIndices(a.lattice)
 end
 function getIterator(::Type{T},a::SU2Simulation) where T<: AbstractAlgo{parallel}
-    return CartesianIndices((a.lattice.Nx,a.lattice.Ny,a.lattice.Nz,a.lattice.Nt))
+    return collect(Iterators.filter(x->(-1)^sum(x.I)==parity,CartesianIndices((a.lattice.Nx,a.lattice.Ny,a.lattice.Nz,a.lattice.Nt))))
 end
