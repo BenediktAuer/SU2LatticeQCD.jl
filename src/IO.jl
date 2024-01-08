@@ -30,8 +30,8 @@ function loadConfig!(a,path)
             throw(DomainError("The used Numbergenerator is not supported!"))
         end
         for i in eachindex(a.:lattice)
-            
-            a.:lattice[i].=parse.(ComplexF32, split(readline(file),('[',',', ']'))[2:3])
+
+            a.:lattice[i]=parse.(ComplexF32, split(readline(file),('[',',', ']'))[2:3])
         end
         #
     end
