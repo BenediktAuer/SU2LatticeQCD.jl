@@ -4,11 +4,11 @@ function newSU2(U,ϵ)
 end
 function get_randomSU2(ϵ)
     #distance = 1/2--1/2 gives interval -1/2 to 1/2
-    r = getRandUniformly(Float32,1,Val(4))
+    r = getRandUniformly(Float32,1,Val(5))
     r24 = view(r,2:4)
     factor =  ϵ/norm(r24)
      r1 =  sign(r[1])*sqrt(1-ϵ^2)
-     return SU2{ComplexF32}(r1+r[4]*factor*im,r[3]*factor+r[2]*factor*im)
+     return ifelse(r[5]>0,SU2{ComplexF32}(r1+r[4]*factor*im,r[3]*factor+r[2]*factor*im),SU2{ComplexF32}(r1+r[4]*factor*im,r[3]*factor+r[2]*factor*im)')
 
 end
 """
