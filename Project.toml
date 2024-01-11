@@ -1,7 +1,7 @@
 name = "SU2LatticeQCD"
 uuid = "2ffe06d0-2653-4f13-9d51-1570e99b1776"
 authors = ["Benedikt Auer"]
-version = "2.0.3"
+version = "2.0.4"
 
 [deps]
 EfficentSU2 = "51eaf21e-d21c-4194-9434-688538785514"
