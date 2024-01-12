@@ -30,7 +30,7 @@ end
 TBW
 """
 function getRandUniformly(::Type{T},distance,::Val{N}) where {T,N}
-    SVector{N}(rand(T,N))./distance .-T(distance/2)
+    (@SVector rand(T,N))./distance .-T(distance/2)
 end
 # @inline function  getRand(::Type{T},::Val{N}) where {T,N}
 #     return   @SVector rand(T,N)
