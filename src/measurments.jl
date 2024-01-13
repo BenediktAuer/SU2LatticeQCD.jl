@@ -4,6 +4,14 @@ function Polyakovloop(lattice,x,Nt)
     #TODO: Anpassen an neue getDirectionalIndex function
 end
 
+function PolyakovloopSquared(lattice,x,Nt)
+    product = prod(lattice[getDirectionalIndex(x,4,4,k)] for k in 0:(Nt-1))
+    return 1/2*tr(product*product)
+    #getDirectionalIndex(CartesianIndex(1,1,1,1,1),4,4,k) for k in 0:3
+    #TODO: Anpassen an neue getDirectionalIndex function
+end
+
+
  """
     measurmentloopSpacial(array,a,func,vargs...)
 calculates the mean of the observable `func` over the spacial components of the lattice.
