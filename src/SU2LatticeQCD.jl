@@ -74,6 +74,18 @@ function simulate!(a::K,sweeps::T,rounds::T, algo::N, measurment::Function, args
     end
     return res
 end
+function simulate!(a::K,sweeps::T,rounds::T, algo::N, measurment::Function,measurment2::Function, args...) where {K<:SU2Simulation,T<:Integer,N<:AbstractAlgo}
+    iterator = getIterator(N,a)
+    func = algo.func
+    res= zeros(sweeps)
+    res2= zeros(sweeps)
+    for i in 1:sweeps
+     @inline func(a.:lattice,a.:β[],iterator,rounds,a.:ϵ[])::Nothing
+     @inbounds res[i] = measurmentloopSpacial(a,measurment,args...)
+     @inbounds res2[i] = measurmentloopSpacial(a,measurment2,args...)
+    end
+    return res,res2
+end
 
 function Base.show(io::IO, ::MIME"text/plain", a::SU2Simulation) 
     println(io, "T=",a.:β[])
