@@ -82,7 +82,7 @@ function simulate!(a::K,sweeps::T,rounds::T, algo::N, measurment::Function,measu
     for i in 1:sweeps
      @inline func(a.:lattice,a.:β[],iterator,rounds,a.:ϵ[])::Nothing
      @inbounds res[i] = measurmentloopSpacial(a,measurment,args...)
-     @inbounds res2[i] = measurmentloopSpacial(a,measurment2,args...)
+     @inbounds res2[i] = measurmentloopSpacial2(a,measurment2,args...)
     end
     return res,res2
 end
