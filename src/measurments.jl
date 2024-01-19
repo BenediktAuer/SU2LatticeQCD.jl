@@ -31,9 +31,11 @@ The only implemented function `func` is `Polyakovloop`.
 measurmentloopSpacial(a,func,vargs...) = _measurmentloopSpacial(a.:lattice,func,vargs...)
 function _measurmentloopSpacial(lattice,func,vargs...)
     iter =CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1))
-    array =zeros(Float64,length(iter))
-    ThreadsX.foreach(enumerate(iter)) do (i,cartidx)
-        @inbounds array[i] = func(lattice,cartidx,vargs...)
-    end
-    return mean(array)
+    abs(ThreadsX.sum(func(lattice,cartidx,vargs...) for cartidx in iter)/length(iter))
+end
+measurmentloopSpacial2(a,func,vargs...) = _measurmentloopSpacial2(a.:lattice,func,vargs...)
+function _measurmentloopSpacial2(lattice,func,vargs...)
+    iter =CartesianIndices((axes(lattice,1),axes(lattice,2),axes(lattice,3),1,1))
+    abs2(ThreadsX.sum(func(lattice,cartidx,vargs...) for cartidx in iter)/length(iter))
+
 end
