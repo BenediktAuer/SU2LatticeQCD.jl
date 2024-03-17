@@ -1,5 +1,5 @@
 module SU2LatticeQCD
-using EfficentSU2,LinearAlgebra,Random,Statistics,ThreadsX, StaticArrays, Logging
+using EfficientSU2,LinearAlgebra,Random,Statistics,ThreadsX, StaticArrays, Logging
 import Base: size,getindex,setindex!,show
 include("GaugeField.jl") 
 include("Acceptens.jl")
